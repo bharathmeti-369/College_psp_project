@@ -11,7 +11,6 @@ def select_option():
     print("7. SAVE A FLAGGED TRANSACTIONS TO A FILE")
     print("8. EXIT")
 #save flagged file 
-fraud_cheking=[]
 all_payments = [
     {"transaction_id": "T001", "account": "ACC101", "amount": 500, "time": "2026-11-06 09:00:00", "recipient": "REC201"},
     {"transaction_id": "T002", "account": "ACC102", "amount": 1000, "time": "2026-11-06 09:02:00", "recipient": "REC202"},
@@ -57,13 +56,86 @@ def rules():
     print("1. More transactions happened within a limited time")
     print("2. Amount above a chosen threshold")
     print("3. Repeated payment has made for a same account with in a limited time")
-    return
+    return 
 def check_transactions():
-    return
+    flagged=[]
+    # Detection settings
+    amount_limit = 20000
+    time_limit = timedelta(minutes=10)
+    transaction_limit = 3
+    for transaction in all_payments:
+        reasons = []
+        account = transaction["account"]
+        recipient = transaction["recipient"]
+        amount = transaction["amount"]
+        transaction_time = datetime.strptime(transaction["time"], "%Y-%m-%d %H:%M:%S")
+
+        # Rule 1: Multiple transactions from same account
+        account_transactions = []
+
+        for payment in all_payments:
+            if payment["account"] == account:
+                payment_time = datetime.strptime(payment["time"], "%Y-%m-%d %H:%M:%S")
+                if abs(transaction_time - payment_time) <= time_limit:
+                    account_transactions.append(payment)
+
+        if len(account_transactions) >= transaction_limit:
+            reasons.append("Multiple transactions within 10 minutes")
+
+        # Rule 2: Transaction amount above threshold
+        if amount > amount_limit:
+            reasons.append("Transaction amount exceeds the limit")
+
+        # Rule 3: Repeated payment to same recipient
+        repeated_payments = []
+
+        for payment in all_payments:
+            if (payment["account"] == account and
+                    payment["recipient"] == recipient):
+
+                payment_time = datetime.strptime(
+                    payment["time"], "%Y-%m-%d %H:%M:%S"
+                )
+
+                if abs(transaction_time - payment_time) <= time_limit:
+                    repeated_payments.append(payment)
+
+        if len(repeated_payments) >= 2:
+            reasons.append("Repeated payments to same recipient")
+
+        # Store flagged transactions
+        if reasons:
+            flagged.append({
+                **transaction,
+                "reasons": reasons
+            })
+
+    # Display flagged transactions
+    if flagged:
+        print("\n========== FLAGGED TRANSACTIONS ==========")
+
+        for transaction in flagged:
+            print("\nTransaction ID:", transaction["transaction_id"])
+            print("Account:", transaction["account"])
+            print("Amount:", transaction["amount"])
+            print("Recipient:", transaction["recipient"])
+            print("Time:", transaction["time"])
+            print("Reasons:")
+
+            for reason in transaction["reasons"]:
+                print("-", reason)
+
+    else:
+        print("\nNo suspicious transactions detected.")
+
+    return flagged
+
+
+    
 def search_account():
     found=False
     while True:
-        print("1.\n Search ID")
+        print("\n1. Search ID")
         print("2. Exit")
         try:
             choice=int(input("Enter your choice:"))
@@ -71,6 +143,7 @@ def search_account():
                 print("Please choose any choice it cannot be empty")
         except ValueError:
             print("Please Enter a integer")
+            continue
         if choice==1:
                 search_id=input("Enter Accound ID :")
                 if not search_id:
@@ -88,10 +161,39 @@ def search_account():
                             return   
                     if found==False:
                         print("\nTransaction History not found Please search a valid account number!")
-def flagged_transactions():
-    return
-def transaction_summary():
-    return
+        if choice==2:
+            break
+def flagged_transactions(flagged):
+    if not flagged:
+        print("\nNo flagged transactions available. Please check transactions first.")
+        return
+
+    print("\n========== FLAGGED TRANSACTIONS ==========")
+
+    for transaction in flagged:
+        print("\n-----------------------------------")
+        print("Transaction ID:", transaction["transaction_id"])
+        print("Account:", transaction["account"])
+        print("Amount:", transaction["amount"])
+        print("Recipient:", transaction["recipient"])
+        print("Time:", transaction["time"])
+
+        print("Reasons:")
+        for reason in transaction["reasons"]:
+            print("-", reason)
+   
+def transaction_summary(flagged):
+    total_transactions = len(all_payments)
+    total_flagged = len(flagged)
+    total_amount = sum(transaction["amount"] for transaction in all_payments)
+    flagged_amount = sum(transaction["amount"] for transaction in flagged)
+
+    print("\n========== TRANSACTION SUMMARY ==========")
+    print("Total Transactions:", total_transactions)
+    print("Total Flagged Transactions:", total_flagged)
+    print("Normal Transactions:", total_transactions - total_flagged)
+    print("Total Transaction Amount:", total_amount)
+    print("Total Flagged Amount:", flagged_amount)
 def save_file():
     return
 while True:
@@ -104,15 +206,15 @@ while True:
     if choice==1:
         display_transactions()
     elif choice==2:
-        pass
+        rules()
     elif choice==3:
-        pass
+        check_transactions()
     elif choice==4:
         search_account()
     elif choice==5:
-        pass
+        flagged_transactions(check_transactions())
     elif choice==6:
-        pass
+        transaction_summary(check_transactions())
     elif choice==7:
         pass
     elif choice==8:
