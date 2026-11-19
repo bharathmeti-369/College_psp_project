@@ -10,7 +10,7 @@ def select_option():
     print("6. SHOW TRANSACTION SUMMARY")
     print("7. SAVE A FLAGGED TRANSACTIONS TO A FILE")
     print("8. EXIT")
-#save flagged file 
+#save flagged file
 all_payments = [
     {"transaction_id": "T001", "account": "ACC101", "amount": 500, "time": "2026-11-06 09:00:00", "recipient": "REC201"},
     {"transaction_id": "T002", "account": "ACC102", "amount": 1000, "time": "2026-11-06 09:02:00", "recipient": "REC202"},
@@ -72,45 +72,33 @@ def check_transactions():
 
         # Rule 1: Multiple transactions from same account
         account_transactions = []
-
         for payment in all_payments:
             if payment["account"] == account:
                 payment_time = datetime.strptime(payment["time"], "%Y-%m-%d %H:%M:%S")
                 if abs(transaction_time - payment_time) <= time_limit:
                     account_transactions.append(payment)
-
         if len(account_transactions) >= transaction_limit:
             reasons.append("Multiple transactions within 10 minutes")
 
         # Rule 2: Transaction amount above threshold
         if amount > amount_limit:
             reasons.append("Transaction amount exceeds the limit")
-
         # Rule 3: Repeated payment to same recipient
         repeated_payments = []
-
         for payment in all_payments:
-            if (payment["account"] == account and
-                    payment["recipient"] == recipient):
-
-                payment_time = datetime.strptime(
-                    payment["time"], "%Y-%m-%d %H:%M:%S"
-                )
-
+            if (payment["account"] == account and payment["recipient"] == recipient):
+                payment_time = datetime.strptime(payment["time"], "%Y-%m-%d %H:%M:%S")
                 if abs(transaction_time - payment_time) <= time_limit:
                     repeated_payments.append(payment)
-
         if len(repeated_payments) >= 2:
             reasons.append("Repeated payments to same recipient")
-
         # Store flagged transactions
         if reasons:
             flagged.append({
                 **transaction,
                 "reasons": reasons
             })
-
-    # Display flagged transactions
+  #Display flagged transactions
     if flagged:
         print("\n========== FLAGGED TRANSACTIONS ==========")
 
@@ -121,22 +109,19 @@ def check_transactions():
             print("Recipient:", transaction["recipient"])
             print("Time:", transaction["time"])
             print("Reasons:")
-
             for reason in transaction["reasons"]:
                 print("-", reason)
-
     else:
-        print("\nNo suspicious transactions detected.")
-
+        print("\nNo transactions detected for review.")
     return flagged
-
-
-    
+  
 def search_account():
-    found=False
+    found_account_id=False
+    found_transaction_id=False
     while True:
-        print("\n1. Search ID")
-        print("2. Exit")
+        print("\n1. Transaction ID")
+        print("2. Search ID")
+        print("3. Exit")
         try:
             choice=int(input("Enter your choice:"))
             if not choice:
@@ -145,13 +130,30 @@ def search_account():
             print("Please Enter a integer")
             continue
         if choice==1:
+            search_transaction_id=input("Enter transaction ID:")
+            if not search_transaction_id:
+                print("Please Enter ID --It cannot be empty!")
+            if search_transaction_id:
+                for transaction in all_payments:
+                    if transaction["transaction_id"].casefold()==search_transaction_id.casefold():
+                        found_transaction_id=True
+                        print("\nTransacton ID :",transaction["transaction_id"])
+                        print("ccount_ID:",transaction["account"])
+                        print("Payment_amount:",transaction["amount"])
+                        print("DATE TIME:",transaction["time"])
+                        print("Recepient ID:",transaction["recipient"])
+                        print()#---->flagged for review or not is filled
+                if found_transaction_id==False:
+                        print("\nTransaction History not found Please search a valid account number!")
+                        return   
+        if choice==2:
                 search_id=input("Enter Accound ID :")
                 if not search_id:
                     print("Please Enter ID --It cannot be empty!")
                 if search_id:
                     for transaction in all_payments:
                         if transaction["account"].casefold()==search_id.casefold():
-                            found=True
+                            found_account_id=True
                             print("\nTransacton ID :",transaction["transaction_id"])
                             print("ccount_ID:",transaction["account"])
                             print("Payment_amount:",transaction["amount"])
@@ -159,9 +161,9 @@ def search_account():
                             print("Recepient ID:",transaction["recipient"])
                             print()#---->flagged for review or not is filled
                             return   
-                    if found==False:
+                    if found_account_id==False:
                         print("\nTransaction History not found Please search a valid account number!")
-        if choice==2:
+        if choice==3:
             break
 def flagged_transactions(flagged):
     if not flagged:
@@ -193,9 +195,26 @@ def transaction_summary(flagged):
     print("Total Flagged Transactions:", total_flagged)
     print("Normal Transactions:", total_transactions - total_flagged)
     print("Total Transaction Amount:", total_amount)
-    print("Total Flagged Amount:", flagged_amount)
-def save_file():
-    return
+    print("Total Flagged Amount:", flagged_amount)   
+def save_file(flagged):
+    if not flagged:
+        print("\nNo flagged transactions available. Please check transactions first.")
+        return
+
+    with open("flagged_transactions.txt", "w", encoding="utf-8") as file:
+        for transaction in flagged:
+            file.write("\n-----------------------------\n")
+            file.write(f"Transaction ID: {transaction['transaction_id']}\n")
+            file.write(f"Account: {transaction['account']}\n")
+            file.write(f"Amount: {transaction['amount']}\n")
+            file.write(f"Recipient: {transaction['recipient']}\n")
+            file.write(f"Time: {transaction['time']}\n")
+            file.write("Status: FLAGGED FOR REVIEW\n")
+            file.write("Reasons:\n")
+
+            for reason in transaction["reasons"]:
+                file.write(f"- {reason}\n")
+    print("\nFlagged transactions saved successfully!")
 while True:
     select_option()
     try:
@@ -216,7 +235,7 @@ while True:
     elif choice==6:
         transaction_summary(check_transactions())
     elif choice==7:
-        pass
+        save_file(check_transactions())
     elif choice==8:
         break
     else:
