@@ -1,0 +1,113 @@
+
+-----------------------------
+Transaction ID: T003
+Account: ACC103
+Amount: 25000
+Recipient: REC203
+Time: 2026-11-06 09:05:00
+Status: FLAGGED FOR REVIEW
+Reasons:
+----- Transaction amount exceeds the limit
+
+-----------------------------
+Transaction ID: T006
+Account: ACC106
+Amount: 500
+Recipient: REC210
+Time: 2026-11-06 09:15:00
+Status: FLAGGED FOR REVIEW
+Reasons:
+----- Multiple transactions within 10 minutes
+----- Repeated payments to same recipient
+
+-----------------------------
+Transaction ID: T007
+Account: ACC106
+Amount: 700
+Recipient: REC210
+Time: 2026-11-06 09:16:00
+Status: FLAGGED FOR REVIEW
+Reasons:
+----- Multiple transactions within 10 minutes
+----- Repeated payments to same recipient
+
+-----------------------------
+Transaction ID: T008
+Account: ACC106
+Amount: 900
+Recipient: REC210
+Time: 2026-11-06 09:18:00
+Status: FLAGGED FOR REVIEW
+Reasons:
+----- Multiple transactions within 10 minutes
+----- Repeated payments to same recipient
+
+-----------------------------
+Transaction ID: T010
+Account: ACC108
+Amount: 200
+Recipient: REC212
+Time: 2026-11-06 09:30:00
+Status: FLAGGED FOR REVIEW
+Reasons:
+----- Multiple transactions within 10 minutes
+
+-----------------------------
+Transaction ID: T011
+Account: ACC108
+Amount: 300
+Recipient: REC213
+Time: 2026-11-06 09:32:00
+Status: FLAGGED FOR REVIEW
+Reasons:
+----- Multiple transactions within 10 minutes
+
+-----------------------------
+Transaction ID: T012
+Account: ACC108
+Amount: 400
+Recipient: REC214
+Time: 2026-11-06 09:34:00
+Status: FLAGGED FOR REVIEW
+Reasons:
+----- Multiple transactions within 10 minutes
+
+-----------------------------
+Transaction ID: T013
+Account: ACC108
+Amount: 500
+Recipient: REC215
+Time: 2026-11-06 09:36:00
+Status: FLAGGED FOR REVIEW
+Reasons:
+----- Multiple transactions within 10 minutes
+
+-----------------------------
+Transaction ID: T014
+Account: ACC109
+Amount: 30000
+Recipient: REC216
+Time: 2026-11-06 09:40:00
+Status: FLAGGED FOR REVIEW
+Reasons:
+----- Transaction amount exceeds the limit
+
+-----------------------------
+Transaction ID: T018
+Account: ACC113
+Amount: 22000
+Recipient: REC220
+Time: 2026-11-06 10:05:00
+Status: FLAGGED FOR REVIEW
+Reasons:
+----- Transaction amount exceeds the limit
+
+-----------------------------
+Transaction ID: T028
+Account: ACC123
+Amount: 28000
+Recipient: REC230
+Time: 2026-11-09 12:00:00
+Status: FLAGGED FOR REVIEW
+Reasons:
+----- Transaction amount exceeds the limit

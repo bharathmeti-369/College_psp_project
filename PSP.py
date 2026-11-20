@@ -1,5 +1,4 @@
-from datetime import date,time,datetime,timezone,timedelta
-
+from datetime import datetime,timedelta
 while True:
     print()
     print("1. adjust amount_threshold")
@@ -210,16 +209,18 @@ def transaction_summary(flagged):
     total_flagged = len(flagged)
     total_amount = sum(transaction["amount"] for transaction in all_payments)
     flagged_amount = sum(transaction["amount"] for transaction in flagged)
+    flagged_percentage=(total_flagged/total_transactions)*100
 
     print("\n========== TRANSACTION SUMMARY ==========")
     print("Total Transactions:", total_transactions)
     print("Total Flagged Transactions:", total_flagged)
     print("Normal Transactions:", total_transactions - total_flagged)
     print("Total Transaction Amount:", total_amount)
-    print("Total Flagged Amount:", flagged_amount)   
+    print("Total Flagged Amount:", flagged_amount)
+    print("Flagged Percentage:",flagged_percentage)   
 def save_file(flagged):
     if not flagged:
-        print("\nNo flagged transactions available. Please check transactions first.")
+        print("\nNo flagged transactions are available. Please check transactions first.")
         return
 
     with open("flagged_transactions.txt", "w", encoding="utf-8") as file:
@@ -232,9 +233,8 @@ def save_file(flagged):
             file.write(f"Time: {transaction['time']}\n")
             file.write("Status: FLAGGED FOR REVIEW\n")
             file.write("Reasons:\n")
-
             for reason in transaction["reasons"]:
-                file.write(f"- {reason}\n")
+                file.write(f"----- {reason}\n")
     print("\nFlagged transactions saved successfully!")
 while True:
     select_option()
