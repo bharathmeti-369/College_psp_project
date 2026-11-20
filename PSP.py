@@ -1,9 +1,11 @@
 from datetime import date,time,datetime,timezone,timedelta
+
 while True:
     print()
-    print("1. adjust amount_thrreshold")
+    print("1. adjust amount_threshold")
     print("2. adjust time limit")
     print("3. adjust no of transactions in a time limit:")
+    print("4. exit")
     try:
         choice=int(input("Enter Your choice:"))
     except ValueError:
@@ -17,7 +19,7 @@ while True:
             continue
     elif choice==2:
         try:
-            time_limit=int(input("Set a time limit for a fraud checking transaction:"))
+            time_limit_minutes=int(input("Set a time limit for a fraud checking transaction:"))
         except ValueError:
             print("It must be a integer")
             continue
@@ -27,9 +29,10 @@ while True:
         except ValueError:
             print("It must be a integer")
             continue
+    elif choice==4:
+        break
     else:
         print("Please select a valid number")
-        break
 def select_option():
     print("\n                               ===============WELCOME================")
     print("__________________________***---DIGITAL PAYMENT FRAUD RULE CHECKER---****___________________________")
@@ -92,7 +95,7 @@ def check_transactions():
     flagged=[]
     # Detection settings
     amount_limit = amount_threshold
-    time_limit = timedelta(minutes=time_limit)
+    time_limit = timedelta(minutes=time_limit_minutes)
     transaction_limit = max_transaction_limit
     for transaction in all_payments:
         reasons = []
@@ -129,17 +132,7 @@ def check_transactions():
                 "reasons": reasons
             })
     if flagged:
-        print("\n========== FLAGGED TRANSACTIONS ==========")
-
-        for transaction in flagged:
-            print("\nTransaction ID:", transaction["transaction_id"])
-            print("Account:", transaction["account"])
-            print("Amount:", transaction["amount"])
-            print("Recipient:", transaction["recipient"])
-            print("Time:", transaction["time"])
-            print("Reasons:")
-            for reason in transaction["reasons"]:
-                print("-", reason)
+        print("total no of flagged transactions are :",len(flagged))
     else:
         print("\nNo transactions detected for review.")
     return flagged
@@ -166,7 +159,7 @@ def search_account():
                     if transaction["transaction_id"].casefold()==search_transaction_id.casefold():
                         found_transaction_id=True
                         print("\nTransacton ID :",transaction["transaction_id"])
-                        print("ccount_ID:",transaction["account"])
+                        print("Account_ID:",transaction["account"])
                         print("Payment_amount:",transaction["amount"])
                         print("DATE TIME:",transaction["time"])
                         print("Recepient ID:",transaction["recipient"])
@@ -267,5 +260,5 @@ while True:
     elif choice==8:
         break
     else:
-        print("Please choice integer accrding to above list")
+        print("Please choice integer according to above list")
 
