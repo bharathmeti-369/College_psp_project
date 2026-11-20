@@ -1,4 +1,35 @@
 from datetime import date,time,datetime,timezone,timedelta
+while True:
+    print()
+    print("1. adjust amount_thrreshold")
+    print("2. adjust time limit")
+    print("3. adjust no of transactions in a time limit:")
+    try:
+        choice=int(input("Enter Your choice:"))
+    except ValueError:
+        print("It must be a integer from listed pattern")
+        continue
+    if choice==1:
+        try:
+            amount_threshold=int(input("Enter the amount you want to set for a daily maximum limit:"))
+        except ValueError:
+            print("amount must be a integer")
+            continue
+    elif choice==2:
+        try:
+            time_limit=int(input("Set a time limit for a fraud checking transaction:"))
+        except ValueError:
+            print("It must be a integer")
+            continue
+    elif choice==3:
+        try:
+            max_transaction_limit=int(input("Enter The limit of transactions with in a time limit:"))
+        except ValueError:
+            print("It must be a integer")
+            continue
+    else:
+        print("Please select a valid number")
+        break
 def select_option():
     print("\n                               ===============WELCOME================")
     print("__________________________***---DIGITAL PAYMENT FRAUD RULE CHECKER---****___________________________")
@@ -60,9 +91,9 @@ def rules():
 def check_transactions():
     flagged=[]
     # Detection settings
-    amount_limit = 20000
-    time_limit = timedelta(minutes=10)
-    transaction_limit = 3
+    amount_limit = amount_threshold
+    time_limit = timedelta(minutes=time_limit)
+    transaction_limit = max_transaction_limit
     for transaction in all_payments:
         reasons = []
         account = transaction["account"]
@@ -70,7 +101,7 @@ def check_transactions():
         amount = transaction["amount"]
         transaction_time = datetime.strptime(transaction["time"], "%Y-%m-%d %H:%M:%S")
 
-        # Rule 1: Multiple transactions from same account
+# here used Rule: Multiple transactions from same account
         account_transactions = []
         for payment in all_payments:
             if payment["account"] == account:
@@ -79,11 +110,10 @@ def check_transactions():
                     account_transactions.append(payment)
         if len(account_transactions) >= transaction_limit:
             reasons.append("Multiple transactions within 10 minutes")
-
-        # Rule 2: Transaction amount above threshold
+ #here used Rule : Transaction amount above threshold
         if amount > amount_limit:
             reasons.append("Transaction amount exceeds the limit")
-        # Rule 3: Repeated payment to same recipient
+ #here used  Rule : Repeated payment to same recipient
         repeated_payments = []
         for payment in all_payments:
             if (payment["account"] == account and payment["recipient"] == recipient):
@@ -92,13 +122,12 @@ def check_transactions():
                     repeated_payments.append(payment)
         if len(repeated_payments) >= 2:
             reasons.append("Repeated payments to same recipient")
-        # Store flagged transactions
+        # we Stored flagged transactions here by using kwargs (**)concept of dictionsry
         if reasons:
             flagged.append({
                 **transaction,
                 "reasons": reasons
             })
-  #Display flagged transactions
     if flagged:
         print("\n========== FLAGGED TRANSACTIONS ==========")
 
@@ -114,7 +143,6 @@ def check_transactions():
     else:
         print("\nNo transactions detected for review.")
     return flagged
-  
 def search_account():
     found_account_id=False
     found_transaction_id=False

@@ -1,5 +1,5 @@
-def f (a, b):
-    return a+b
 
-t = (5,6)
-print(f(*t))
+while True:
+    x=input()
+    break
+print(x)
